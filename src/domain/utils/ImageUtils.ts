@@ -77,7 +77,7 @@ export class ImageUtils {
         }
     }
 
-    static getSquareCrop(width: number, height: number): ImageManipulateAction['crop'] {
+    static getSquareCrop(width: number, height: number): { originX: number; originY: number; width: number; height: number } {
         const size = Math.min(width, height);
         const originX = (width - size) / 2;
         const originY = (height - size) / 2;
