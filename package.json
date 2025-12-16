@@ -29,17 +29,23 @@
     "url": "https://github.com/umituz/react-native-image"
   },
   "peerDependencies": {
+    "@umituz/react-native-filesystem": "latest",
+    "expo-image-manipulator": ">=11.0.0",
     "react": ">=18.2.0",
     "react-native": ">=0.74.0",
-    "expo-image-manipulator": ">=11.0.0",
-    "react-native-image-viewing": ">=0.2.0",
-    "@umituz/react-native-filesystem": "latest"
+    "react-native-image-viewing": ">=0.2.0"
   },
   "devDependencies": {
+    "@react-native/typescript-config": "^0.83.0",
     "@types/react": "^18.2.45",
     "@types/react-native": "^0.73.0",
+    "@umituz/react-native-design-system-theme": "^1.12.0",
+    "@umituz/react-native-filesystem": "^2.1.1",
+    "expo-file-system": "^19.0.21",
+    "expo-image-manipulator": "^14.0.8",
     "react": "^18.2.0",
     "react-native": "^0.74.0",
+    "react-native-image-viewing": "^0.2.2",
     "typescript": "^5.3.3"
   },
   "publishConfig": {

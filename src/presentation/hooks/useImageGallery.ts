@@ -10,7 +10,7 @@ import { ImageViewerService } from '../../infrastructure/services/ImageViewerSer
 import type {
   ImageViewerItem,
   ImageGalleryOptions,
-} from '../../domain/entities/Image';
+} from '../../domain/entities/ImageTypes';
 
 /**
  * useImageGallery hook return type

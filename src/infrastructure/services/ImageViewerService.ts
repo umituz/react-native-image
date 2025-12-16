@@ -8,7 +8,7 @@
 import type {
   ImageViewerItem,
   ImageGalleryOptions,
-} from '../../domain/entities/Image';
+} from '../../domain/entities/ImageTypes';
 
 /**
  * Image viewer configuration

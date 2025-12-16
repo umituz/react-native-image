@@ -5,7 +5,7 @@
  * Resize, crop, rotate, flip, compress, gallery viewer
  *
  * Usage:
- *   import { useImage, useImageGallery, ImageService, ImageUtils } from '@umituz/react-native-image';
+ *   import { useImage, ImageGallery, ImageService, ImageUtils } from '@umituz/react-native-image';
  */
 
 // =============================================================================
@@ -21,35 +21,41 @@ export type {
   ImageGalleryOptions,
   ImageOperationResult,
   SaveFormat,
-} from './domain/entities/Image';
+} from './domain/entities/ImageTypes';
 
 export {
   ImageFormat,
   ImageOrientation,
-  IMAGE_CONSTANTS,
-  ImageUtils,
-} from './domain/entities/Image';
+} from './domain/entities/ImageTypes';
+
+export { IMAGE_CONSTANTS } from './domain/entities/ImageConstants';
+export { ImageUtils } from './domain/utils/ImageUtils';
 
 // =============================================================================
 // INFRASTRUCTURE LAYER - Services
 // =============================================================================
 
-export { ImageService } from './infrastructure/services/ImageService';
+export { ImageTransformService } from './infrastructure/services/ImageTransformService';
+export { ImageConversionService } from './infrastructure/services/ImageConversionService';
+export { ImageStorageService } from './infrastructure/services/ImageStorageService';
 export {
   ImageViewerService,
   type ImageViewerConfig,
 } from './infrastructure/services/ImageViewerService';
 
 // =============================================================================
-// PRESENTATION LAYER - Hooks
+// PRESENTATION LAYER - Components & Hooks
 // =============================================================================
 
-export {
-  useImage,
-} from './presentation/hooks/useImage';
+export { ImageGallery, type ImageGalleryProps } from './presentation/components/ImageGallery';
+
+export { useImage } from './presentation/hooks/useImage';
+export { useImageTransform } from './presentation/hooks/useImageTransform';
+export { useImageConversion } from './presentation/hooks/useImageConversion';
 
 export {
   useImageGallery,
   type UseImageGalleryReturn,
 } from './presentation/hooks/useImageGallery';
+
 
