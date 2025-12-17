@@ -2,19 +2,23 @@
  * Image Gallery Component
  * 
  * A wrapper around react-native-image-viewing that provides
- * theme integration and standard configuration.
+ * theme integration, standard configuration, and optional editing.
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import ImageViewing from 'react-native-image-viewing';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { useAppDesignTokens } from '@umituz/react-native-design-system-theme';
 import type { ImageViewerItem, ImageGalleryOptions } from '../../domain/entities/ImageTypes';
+import { GalleryHeader } from './GalleryHeader';
 
 export interface ImageGalleryProps extends ImageGalleryOptions {
     images: ImageViewerItem[];
     visible: boolean;
     onDismiss: () => void;
     index?: number;
+    onImageChange?: (uri: string, index: number) => void | Promise<void>;
+    enableEditing?: boolean;
 }
 
 export const ImageGallery: React.FC<ImageGalleryProps> = ({
@@ -26,29 +30,74 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
     swipeToCloseEnabled = true,
     doubleTapToZoomEnabled = true,
     onIndexChange,
+    onImageChange,
+    enableEditing = false,
 }) => {
     const tokens = useAppDesignTokens();
+    const [currentIndex, setCurrentIndex] = React.useState(index);
 
-    // Use theme background if not provided
+    React.useEffect(() => {
+        setCurrentIndex(index);
+    }, [index]);
+
     const bg = backgroundColor || tokens.colors.backgroundPrimary;
 
-    // Map images to structure expected by ImageViewing (uri object)
-    const viewerImages = React.useMemo(() =>
-        images.map(img => ({ uri: img.uri })),
+    const viewerImages = React.useMemo(
+        () => images.map((img) => ({ uri: img.uri })),
         [images]
     );
+
+    const handleEdit = useCallback(async () => {
+        const currentImage = images[currentIndex];
+        if (!currentImage || !onImageChange) return;
+
+        try {
+            const result = await ImageManipulator.manipulateAsync(
+                currentImage.uri,
+                [],
+                {
+                    compress: 1,
+                    format: ImageManipulator.SaveFormat.JPEG,
+                }
+            );
+
+            if (result.uri) {
+                await onImageChange(result.uri, currentIndex);
+            }
+        } catch (error) {
+            // Silent fail
+        }
+    }, [images, currentIndex, onImageChange]);
+
+    const handleIndexChange = useCallback(
+        (newIndex: number) => {
+            setCurrentIndex(newIndex);
+            onIndexChange?.(newIndex);
+        },
+        [onIndexChange]
+    );
+
+    const headerComponent = useCallback(() => {
+        if (!enableEditing) return null;
+        return (
+            <GalleryHeader
+                onEdit={handleEdit}
+                onClose={onDismiss}
+            />
+        );
+    }, [enableEditing, handleEdit, onDismiss]);
 
     return (
         <ImageViewing
             images={viewerImages}
-            imageIndex={index}
+            imageIndex={currentIndex}
             visible={visible}
             onRequestClose={onDismiss}
-            onImageIndexChange={onIndexChange}
+            onImageIndexChange={handleIndexChange}
             backgroundColor={bg}
             swipeToCloseEnabled={swipeToCloseEnabled}
             doubleTapToZoomEnabled={doubleTapToZoomEnabled}
-        // Can add custom Header/Footer here using theme tokens if needed
+            HeaderComponent={headerComponent}
         />
     );
 };

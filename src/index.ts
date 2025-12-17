@@ -52,6 +52,7 @@ export { ImageGallery, type ImageGalleryProps } from './presentation/components/
 export { useImage } from './presentation/hooks/useImage';
 export { useImageTransform } from './presentation/hooks/useImageTransform';
 export { useImageConversion } from './presentation/hooks/useImageConversion';
+export { useImageEditor } from './presentation/hooks/useImageEditor';
 
 export {
   useImageGallery,
