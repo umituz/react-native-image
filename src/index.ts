@@ -21,6 +21,9 @@ export type {
   ImageGalleryOptions,
   ImageOperationResult,
   SaveFormat,
+  ImageDimensions,
+  ImageCropArea,
+  ImageFlipOptions,
 } from './domain/entities/ImageTypes';
 
 export {
@@ -36,6 +39,7 @@ export { ImageUtils } from './domain/utils/ImageUtils';
 // =============================================================================
 
 export { ImageTransformService } from './infrastructure/services/ImageTransformService';
+export { ImageAdvancedTransformService } from './infrastructure/services/ImageAdvancedTransformService';
 export { ImageConversionService } from './infrastructure/services/ImageConversionService';
 export { ImageStorageService } from './infrastructure/services/ImageStorageService';
 export {

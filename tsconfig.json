@@ -16,10 +16,11 @@
         "jsx": "react",
         "types": [
             "react"
-        ]
+        ],
+        "noEmitOnError": true
     },
     "include": [
-        "src"
+        "src/**/*"
     ],
     "exclude": [
         "node_modules",

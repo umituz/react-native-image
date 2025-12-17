@@ -1,7 +1,7 @@
 /**
- * Image Utilities
+ * Image Domain - Utility Functions
  */
-import { ImageFormat, ImageOrientation, ImageManipulateAction } from "../entities/ImageTypes";
+import { ImageFormat, ImageOrientation, ImageDimensions, ImageCropArea } from "../entities/ImageTypes";
 import { IMAGE_CONSTANTS } from "../entities/ImageConstants";
 
 export class ImageUtils {
@@ -20,7 +20,7 @@ export class ImageUtils {
         height: number,
         maxWidth: number,
         maxHeight: number
-    ): { width: number; height: number } {
+    ): ImageDimensions {
         const aspectRatio = ImageUtils.getAspectRatio(width, height);
         let newWidth = width;
         let newHeight = height;
@@ -44,8 +44,8 @@ export class ImageUtils {
     static getThumbnailSize(
         width: number,
         height: number,
-        thumbnailSize: number = IMAGE_CONSTANTS.THUMBNAIL_SIZE
-    ): { width: number; height: number } {
+        thumbnailSize: number = IMAGE_CONSTANTS.thumbnailSize
+    ): ImageDimensions {
         return ImageUtils.fitToSize(width, height, thumbnailSize, thumbnailSize);
     }
 
@@ -77,7 +77,7 @@ export class ImageUtils {
         }
     }
 
-    static getSquareCrop(width: number, height: number): { originX: number; originY: number; width: number; height: number } {
+    static getSquareCrop(width: number, height: number): ImageCropArea {
         const size = Math.min(width, height);
         const originX = (width - size) / 2;
         const originY = (height - size) / 2;

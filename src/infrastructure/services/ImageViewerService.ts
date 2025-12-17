@@ -1,8 +1,7 @@
 /**
- * Image Domain - Image Viewer Service
+ * Image Infrastructure - Viewer Service
  *
- * Service for image viewing and gallery using react-native-image-viewing.
- * Provides full-screen image viewer with zoom, swipe, and gallery features.
+ * Provides configuration for react-native-image-viewing component
  */
 
 import type {
@@ -10,9 +9,6 @@ import type {
   ImageGalleryOptions,
 } from '../../domain/entities/ImageTypes';
 
-/**
- * Image viewer configuration
- */
 export interface ImageViewerConfig {
   images: ImageViewerItem[];
   index?: number;
@@ -21,26 +17,11 @@ export interface ImageViewerConfig {
   options?: ImageGalleryOptions;
 }
 
-/**
- * Image viewer service
- *
- * NOTE: This service provides configuration for react-native-image-viewing component.
- * The actual viewer component is rendered in the presentation layer.
- */
 export class ImageViewerService {
-  /**
-   * Prepare images for viewer
-   * Converts image URIs to viewer format
-   */
   static prepareImages(uris: string[]): ImageViewerItem[] {
-    return uris.map(uri => ({
-      uri,
-    }));
+    return uris.map(uri => ({ uri }));
   }
 
-  /**
-   * Prepare images with metadata
-   */
   static prepareImagesWithMetadata(items: ImageViewerItem[]): ImageViewerItem[] {
     return items.map(item => ({
       uri: item.uri,
@@ -51,9 +32,6 @@ export class ImageViewerService {
     }));
   }
 
-  /**
-   * Create viewer configuration
-   */
   static createViewerConfig(
     images: ImageViewerItem[],
     startIndex: number = 0,
@@ -74,9 +52,6 @@ export class ImageViewerService {
     };
   }
 
-  /**
-   * Get default gallery options
-   */
   static getDefaultOptions(): ImageGalleryOptions {
     return {
       index: 0,

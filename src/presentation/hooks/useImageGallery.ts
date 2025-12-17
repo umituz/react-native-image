@@ -1,8 +1,5 @@
 /**
- * Image Domain - useImageGallery Hook
- *
- * React hook for image gallery and viewer using react-native-image-viewing.
- * Provides full-screen image viewer with zoom, swipe, and gallery features.
+ * Presentation - Image Gallery Hook
  */
 
 import { useState, useCallback, useMemo } from 'react';
@@ -12,51 +9,16 @@ import type {
   ImageGalleryOptions,
 } from '../../domain/entities/ImageTypes';
 
-/**
- * useImageGallery hook return type
- */
 export interface UseImageGalleryReturn {
-  // State
   visible: boolean;
   currentIndex: number;
   images: ImageViewerItem[];
-
-  // Actions
   open: (images: ImageViewerItem[] | string[], startIndex?: number, options?: ImageGalleryOptions) => void;
   close: () => void;
   setIndex: (index: number) => void;
-
-  // Gallery options
   options: ImageGalleryOptions;
 }
 
-/**
- * useImageGallery hook for full-screen image viewer
- *
- * USAGE:
- * ```typescript
- * const { visible, currentIndex, images, open, close, options } = useImageGallery();
- *
- * // Open gallery with image URIs
- * open(['uri1', 'uri2', 'uri3']);
- *
- * // Open gallery with metadata
- * open([
- *   { uri: 'uri1', title: 'Photo 1' },
- *   { uri: 'uri2', title: 'Photo 2' },
- * ], 0, { backgroundColor: '#000000' });
- *
- * // Render ImageViewing component
- * <ImageViewing
- *   images={images}
- *   imageIndex={currentIndex}
- *   visible={visible}
- *   onRequestClose={close}
- *   onIndexChange={setIndex}
- *   {...options}
- * />
- * ```
- */
 export const useImageGallery = (
   defaultOptions?: ImageGalleryOptions
 ): UseImageGalleryReturn => {
@@ -67,16 +29,12 @@ export const useImageGallery = (
     defaultOptions || ImageViewerService.getDefaultOptions()
   );
 
-  /**
-   * Open gallery with images
-   */
   const open = useCallback(
     (
       imageData: ImageViewerItem[] | string[],
       startIndex: number = 0,
       options?: ImageGalleryOptions
     ) => {
-      // Prepare images based on input type
       const preparedImages =
         typeof imageData[0] === 'string'
           ? ImageViewerService.prepareImages(imageData as string[])
@@ -85,7 +43,6 @@ export const useImageGallery = (
       setImages(preparedImages);
       setCurrentIndex(options?.index ?? startIndex);
 
-      // Merge options with defaults
       if (options) {
         setGalleryOptions({
           ...galleryOptions,
@@ -98,33 +55,22 @@ export const useImageGallery = (
     [galleryOptions]
   );
 
-  /**
-   * Close gallery
-   */
   const close = useCallback(() => {
     setVisible(false);
 
-    // Call onDismiss if provided
     if (galleryOptions.onDismiss) {
       galleryOptions.onDismiss();
     }
   }, [galleryOptions]);
 
-  /**
-   * Set current image index
-   */
   const setIndex = useCallback((index: number) => {
     setCurrentIndex(index);
 
-    // Call onIndexChange if provided
     if (galleryOptions.onIndexChange) {
       galleryOptions.onIndexChange(index);
     }
   }, [galleryOptions]);
 
-  /**
-   * Memoized options for ImageViewing component
-   */
   const options = useMemo(() => ({
     backgroundColor: galleryOptions.backgroundColor || '#000000',
     swipeToCloseEnabled: galleryOptions.swipeToCloseEnabled ?? true,
@@ -132,17 +78,12 @@ export const useImageGallery = (
   }), [galleryOptions]);
 
   return {
-    // State
     visible,
     currentIndex,
     images,
-
-    // Actions
     open,
     close,
     setIndex,
-
-    // Gallery options
     options,
   };
 };

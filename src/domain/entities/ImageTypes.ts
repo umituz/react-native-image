@@ -1,5 +1,5 @@
 /**
- * Image Type Definitions
+ * Image Domain - Core Type Definitions
  */
 
 export enum ImageFormat {
@@ -16,11 +16,28 @@ export enum ImageOrientation {
     SQUARE = 'square',
 }
 
+export interface ImageDimensions {
+    width: number;
+    height: number;
+}
+
+export interface ImageCropArea {
+    originX: number;
+    originY: number;
+    width: number;
+    height: number;
+}
+
+export interface ImageFlipOptions {
+    vertical?: boolean;
+    horizontal?: boolean;
+}
+
 export interface ImageManipulateAction {
-    resize?: { width?: number; height?: number };
-    crop?: { originX: number; originY: number; width: number; height: number };
+    resize?: Partial<ImageDimensions>;
+    crop?: ImageCropArea;
     rotate?: number;
-    flip?: { vertical?: boolean; horizontal?: boolean };
+    flip?: ImageFlipOptions;
 }
 
 export interface ImageSaveOptions {
@@ -36,10 +53,8 @@ export interface ImageManipulationResult {
     base64?: string;
 }
 
-export interface ImageMetadata {
+export interface ImageMetadata extends ImageDimensions {
     uri: string;
-    width: number;
-    height: number;
     format?: ImageFormat;
     size?: number;
     orientation?: ImageOrientation;

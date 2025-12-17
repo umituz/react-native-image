@@ -1,8 +1,7 @@
 /**
- * Image Transform Service
+ * Image Infrastructure - Transform Service
  * 
- * Handles basic geometric transformations: resize, crop, rotate, flip.
- * Also handles combined manipulations.
+ * Handles geometric transformations: resize, crop, rotate, flip
  */
 
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -11,18 +10,27 @@ import type {
     ImageSaveOptions,
     ImageManipulationResult,
     SaveFormat,
+    ImageCropArea,
+    ImageFlipOptions,
 } from '../../domain/entities/ImageTypes';
 import { IMAGE_CONSTANTS } from '../../domain/entities/ImageConstants';
 import { ImageUtils } from '../../domain/utils/ImageUtils';
+import { ImageValidator } from '../utils/ImageValidator';
+import { ImageErrorHandler, IMAGE_ERROR_CODES } from '../utils/ImageErrorHandler';
 
 export class ImageTransformService {
-    /**
-     * Helper to map SaveFormat to Manipulator format
-     */
-    static mapFormat(format?: SaveFormat): ImageManipulator.SaveFormat {
+    private static mapFormat(format?: SaveFormat): ImageManipulator.SaveFormat {
         if (format === 'png') return ImageManipulator.SaveFormat.PNG;
         if (format === 'webp') return ImageManipulator.SaveFormat.WEBP;
         return ImageManipulator.SaveFormat.JPEG;
+    }
+
+    private static buildSaveOptions(options?: ImageSaveOptions): ImageManipulator.SaveOptions {
+        return {
+            compress: options?.compress ?? IMAGE_CONSTANTS.defaultQuality,
+            format: this.mapFormat(options?.format),
+            base64: options?.base64,
+        };
     }
 
     static async resize(
@@ -30,39 +38,51 @@ export class ImageTransformService {
         width?: number,
         height?: number,
         options?: ImageSaveOptions
-    ): Promise<ImageManipulationResult | null> {
+    ): Promise<ImageManipulationResult> {
         try {
+            const uriValidation = ImageValidator.validateUri(uri);
+            if (!uriValidation.isValid) {
+                throw ImageErrorHandler.createError(uriValidation.error!, IMAGE_ERROR_CODES.INVALID_URI, 'resize');
+            }
+
+            const dimValidation = ImageValidator.validateDimensions({ width, height });
+            if (!dimValidation.isValid) {
+                throw ImageErrorHandler.createError(dimValidation.error!, IMAGE_ERROR_CODES.INVALID_DIMENSIONS, 'resize');
+            }
+
             return await ImageManipulator.manipulateAsync(
                 uri,
                 [{ resize: { width, height } }],
-                {
-                    compress: options?.compress || IMAGE_CONSTANTS.DEFAULT_QUALITY,
-                    format: ImageTransformService.mapFormat(options?.format),
-                    base64: options?.base64,
-                }
+                this.buildSaveOptions(options)
             );
-        } catch {
-            return null;
+        } catch (error) {
+            throw ImageErrorHandler.handleUnknownError(error, 'resize');
         }
     }
 
     static async crop(
         uri: string,
-        cropArea: { originX: number; originY: number; width: number; height: number },
+        cropArea: ImageCropArea,
         options?: ImageSaveOptions
-    ): Promise<ImageManipulationResult | null> {
+    ): Promise<ImageManipulationResult> {
         try {
+            const uriValidation = ImageValidator.validateUri(uri);
+            if (!uriValidation.isValid) {
+                throw ImageErrorHandler.createError(uriValidation.error!, IMAGE_ERROR_CODES.INVALID_URI, 'crop');
+            }
+
+            const dimValidation = ImageValidator.validateDimensions(cropArea);
+            if (!dimValidation.isValid) {
+                throw ImageErrorHandler.createError(dimValidation.error!, IMAGE_ERROR_CODES.INVALID_DIMENSIONS, 'crop');
+            }
+
             return await ImageManipulator.manipulateAsync(
                 uri,
                 [{ crop: cropArea }],
-                {
-                    compress: options?.compress || IMAGE_CONSTANTS.DEFAULT_QUALITY,
-                    format: ImageTransformService.mapFormat(options?.format),
-                    base64: options?.base64,
-                }
+                this.buildSaveOptions(options)
             );
-        } catch {
-            return null;
+        } catch (error) {
+            throw ImageErrorHandler.handleUnknownError(error, 'crop');
         }
     }
 
@@ -70,28 +90,39 @@ export class ImageTransformService {
         uri: string,
         degrees: number,
         options?: ImageSaveOptions
-    ): Promise<ImageManipulationResult | null> {
+    ): Promise<ImageManipulationResult> {
         try {
+            const uriValidation = ImageValidator.validateUri(uri);
+            if (!uriValidation.isValid) {
+                throw ImageErrorHandler.createError(uriValidation.error!, IMAGE_ERROR_CODES.INVALID_URI, 'rotate');
+            }
+
+            const rotationValidation = ImageValidator.validateRotation(degrees);
+            if (!rotationValidation.isValid) {
+                throw ImageErrorHandler.createError(rotationValidation.error!, IMAGE_ERROR_CODES.VALIDATION_ERROR, 'rotate');
+            }
+
             return await ImageManipulator.manipulateAsync(
                 uri,
                 [{ rotate: degrees }],
-                {
-                    compress: options?.compress || IMAGE_CONSTANTS.DEFAULT_QUALITY,
-                    format: ImageTransformService.mapFormat(options?.format),
-                    base64: options?.base64,
-                }
+                this.buildSaveOptions(options)
             );
-        } catch {
-            return null;
+        } catch (error) {
+            throw ImageErrorHandler.handleUnknownError(error, 'rotate');
         }
     }
 
     static async flip(
         uri: string,
-        flip: { horizontal?: boolean; vertical?: boolean },
+        flip: ImageFlipOptions,
         options?: ImageSaveOptions
-    ): Promise<ImageManipulationResult | null> {
+    ): Promise<ImageManipulationResult> {
         try {
+            const uriValidation = ImageValidator.validateUri(uri);
+            if (!uriValidation.isValid) {
+                throw ImageErrorHandler.createError(uriValidation.error!, IMAGE_ERROR_CODES.INVALID_URI, 'flip');
+            }
+
             const actions: ImageManipulator.Action[] = [];
             if (flip.horizontal) actions.push({ flip: ImageManipulator.FlipType.Horizontal });
             if (flip.vertical) actions.push({ flip: ImageManipulator.FlipType.Vertical });
@@ -99,74 +130,10 @@ export class ImageTransformService {
             return await ImageManipulator.manipulateAsync(
                 uri,
                 actions,
-                {
-                    compress: options?.compress || IMAGE_CONSTANTS.DEFAULT_QUALITY,
-                    format: ImageTransformService.mapFormat(options?.format),
-                    base64: options?.base64,
-                }
+                this.buildSaveOptions(options)
             );
-        } catch {
-            return null;
-        }
-    }
-
-    static async manipulate(
-        uri: string,
-        action: ImageManipulateAction,
-        options?: ImageSaveOptions
-    ): Promise<ImageManipulationResult | null> {
-        try {
-            const actions: ImageManipulator.Action[] = [];
-            if (action.resize) actions.push({ resize: action.resize });
-            if (action.crop) {
-                // @ts-ignore - guarded by check above
-                actions.push({ crop: action.crop });
-            }
-            if (action.rotate) actions.push({ rotate: action.rotate });
-            if (action.flip) {
-                if (action.flip.horizontal) actions.push({ flip: ImageManipulator.FlipType.Horizontal });
-                if (action.flip.vertical) actions.push({ flip: ImageManipulator.FlipType.Vertical });
-            }
-
-            return await ImageManipulator.manipulateAsync(
-                uri,
-                actions,
-                {
-                    compress: options?.compress || IMAGE_CONSTANTS.DEFAULT_QUALITY,
-                    format: ImageTransformService.mapFormat(options?.format),
-                    base64: options?.base64,
-                }
-            );
-        } catch {
-            return null;
-        }
-    }
-
-    static async resizeToFit(
-        uri: string,
-        maxWidth: number,
-        maxHeight: number,
-        options?: ImageSaveOptions
-    ): Promise<ImageManipulationResult | null> {
-        try {
-            const dimensions = ImageUtils.fitToSize(maxWidth, maxHeight, maxWidth, maxHeight);
-            return ImageTransformService.resize(uri, dimensions.width, dimensions.height, options);
-        } catch {
-            return null;
-        }
-    }
-
-    static async cropToSquare(
-        uri: string,
-        width: number,
-        height: number,
-        options?: ImageSaveOptions
-    ): Promise<ImageManipulationResult | null> {
-        try {
-            const cropArea = ImageUtils.getSquareCrop(width, height);
-            return ImageTransformService.crop(uri, cropArea, options);
-        } catch {
-            return null;
+        } catch (error) {
+            throw ImageErrorHandler.handleUnknownError(error, 'flip');
         }
     }
 }

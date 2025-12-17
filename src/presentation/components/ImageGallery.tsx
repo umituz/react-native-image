@@ -1,14 +1,12 @@
 /**
- * Image Gallery Component
+ * Presentation - Image Gallery Component
  * 
- * A wrapper around react-native-image-viewing that provides
- * theme integration, standard configuration, and optional editing.
+ * Wrapper around react-native-image-viewing with theme integration
  */
 
 import React, { useCallback } from 'react';
 import ImageViewing from 'react-native-image-viewing';
-import * as ImageManipulator from 'expo-image-manipulator';
-import { useAppDesignTokens } from '@umituz/react-native-design-system-theme';
+// import { useAppDesignTokens } from '@umituz/react-native-design-system-theme';
 import type { ImageViewerItem, ImageGalleryOptions } from '../../domain/entities/ImageTypes';
 import { GalleryHeader } from './GalleryHeader';
 
@@ -33,14 +31,14 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
     onImageChange,
     enableEditing = false,
 }) => {
-    const tokens = useAppDesignTokens();
+    // const tokens = useAppDesignTokens();
     const [currentIndex, setCurrentIndex] = React.useState(index);
 
     React.useEffect(() => {
         setCurrentIndex(index);
     }, [index]);
 
-    const bg = backgroundColor || tokens.colors.backgroundPrimary;
+    const bg = backgroundColor || '#000000';
 
     const viewerImages = React.useMemo(
         () => images.map((img) => ({ uri: img.uri })),
@@ -52,20 +50,9 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
         if (!currentImage || !onImageChange) return;
 
         try {
-            const result = await ImageManipulator.manipulateAsync(
-                currentImage.uri,
-                [],
-                {
-                    compress: 1,
-                    format: ImageManipulator.SaveFormat.JPEG,
-                }
-            );
-
-            if (result.uri) {
-                await onImageChange(result.uri, currentIndex);
-            }
+            await onImageChange(currentImage.uri, currentIndex);
         } catch (error) {
-            // Silent fail
+            // Consumer should handle editing logic
         }
     }, [images, currentIndex, onImageChange]);
 

@@ -1,28 +1,32 @@
-import { useState, useCallback } from 'react';
-
 /**
- * Generic hook to handle image operation states (loading, error)
- * adhering to DRY principles.
+ * Presentation - Image Operation Hook
+ * 
+ * Generic state management for async image operations
  */
+
+import { useState, useCallback } from 'react';
+import { ImageError } from '../../infrastructure/utils/ImageErrorHandler';
+
 export const useImageOperation = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const execute = useCallback(async <T>(
-        operation: () => Promise<T | null>,
+        operation: () => Promise<T>,
         errorMessage: string
     ): Promise<T | null> => {
         setIsProcessing(true);
         setError(null);
+        
         try {
             const result = await operation();
-            if (!result) {
-                setError(errorMessage);
-                return null;
-            }
             return result;
         } catch (err) {
-            setError(err instanceof Error ? err.message : errorMessage);
+            if (err instanceof ImageError) {
+                setError(err.message);
+            } else {
+                setError(err instanceof Error ? err.message : errorMessage);
+            }
             return null;
         } finally {
             setIsProcessing(false);

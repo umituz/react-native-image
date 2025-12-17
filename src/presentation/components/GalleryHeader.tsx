@@ -1,9 +1,8 @@
 /**
- * GalleryHeader Component
- * Header for ImageGallery with optional edit button and close button
+ * Presentation - Gallery Header Component
  * 
- * This component should be implemented by the consumer app
- * using their own design system and safe area handling.
+ * NOTE: This component should be implemented by consumer app
+ * using their design system and safe area handling
  */
 
 import React from 'react';

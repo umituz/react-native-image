@@ -1,8 +1,7 @@
 /**
- * useImage Hook
+ * Presentation - Image Hook
  * 
- * Aggregator hook that combines transformation and conversion capabilities.
- * Kept simple and modular.
+ * Aggregator hook combining transformation and conversion capabilities
  */
 
 import { useImageTransform } from './useImageTransform';

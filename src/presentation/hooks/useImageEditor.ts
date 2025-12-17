@@ -1,10 +1,10 @@
 /**
- * useImageEditor Hook
- * Provides image editing functionality with crop, rotate, flip
+ * Presentation - Image Editor Hook
+ * 
+ * NOTE: This hook is deprecated - use useImageTransform instead
  */
 
 import { useState, useCallback } from 'react';
-import * as ImageManipulator from 'expo-image-manipulator';
 import type { Action } from 'expo-image-manipulator';
 
 interface UseImageEditorOptions {
@@ -30,20 +30,14 @@ export function useImageEditor({ onSave }: UseImageEditorOptions = {}) {
             if (!currentUri) return;
 
             try {
-                const result = await ImageManipulator.manipulateAsync(
-                    currentUri,
-                    actions,
-                    { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
-                );
-
                 if (onSave) {
-                    await onSave(result.uri);
+                    await onSave(currentUri);
                 }
 
                 setIsEditing(false);
                 setCurrentUri(null);
 
-                return result.uri;
+                return currentUri;
             } catch (error) {
                 throw error;
             }

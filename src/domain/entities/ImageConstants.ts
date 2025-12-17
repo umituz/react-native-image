@@ -1,21 +1,38 @@
 /**
- * Image Constants
+ * Image Domain - Configuration Constants
  */
 import { SaveFormat } from "./ImageTypes";
 
-export const IMAGE_CONSTANTS = {
-    MAX_WIDTH: 2048,
-    MAX_HEIGHT: 2048,
-    DEFAULT_QUALITY: 0.8,
-    THUMBNAIL_SIZE: 200,
-    COMPRESS_QUALITY: {
-        LOW: 0.5,
-        MEDIUM: 0.7,
-        HIGH: 0.9,
+export interface ImageConfiguration {
+    readonly maxWidth: number;
+    readonly maxHeight: number;
+    readonly defaultQuality: number;
+    readonly thumbnailSize: number;
+    readonly compressQuality: {
+        readonly low: number;
+        readonly medium: number;
+        readonly high: number;
+    };
+    readonly format: {
+        readonly jpeg: SaveFormat;
+        readonly png: SaveFormat;
+        readonly webp: SaveFormat;
+    };
+}
+
+export const IMAGE_CONSTANTS: ImageConfiguration = {
+    maxWidth: 2048,
+    maxHeight: 2048,
+    defaultQuality: 0.8,
+    thumbnailSize: 200,
+    compressQuality: {
+        low: 0.5,
+        medium: 0.7,
+        high: 0.9,
     },
-    FORMAT: {
-        JPEG: 'jpeg' as SaveFormat,
-        PNG: 'png' as SaveFormat,
-        WEBP: 'webp' as SaveFormat,
+    format: {
+        jpeg: 'jpeg' as SaveFormat,
+        png: 'png' as SaveFormat,
+        webp: 'webp' as SaveFormat,
     },
-} as const;
+};
