@@ -1,6 +1,6 @@
 /**
  * GalleryHeader Component
- * Header for ImageGallery with edit and close buttons
+ * Header for ImageGallery with optional edit button and close button
  * 
  * This component should be implemented by the consumer app
  * using their own design system and safe area handling.
@@ -10,16 +10,20 @@ import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 
 interface GalleryHeaderProps {
-    onEdit: () => void;
+    onEdit?: () => void;
     onClose: () => void;
 }
 
 export function GalleryHeader({ onEdit, onClose }: GalleryHeaderProps) {
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.button} onPress={onEdit}>
-                <Text style={styles.buttonText}>Edit</Text>
-            </TouchableOpacity>
+            {onEdit ? (
+                <TouchableOpacity style={styles.button} onPress={onEdit}>
+                    <Text style={styles.buttonText}>Edit</Text>
+                </TouchableOpacity>
+            ) : (
+                <View style={styles.spacer} />
+            )}
 
             <TouchableOpacity style={styles.button} onPress={onClose}>
                 <Text style={styles.buttonText}>✕</Text>
@@ -41,6 +45,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    spacer: {
+        width: 48,
     },
     button: {
         flexDirection: 'row',

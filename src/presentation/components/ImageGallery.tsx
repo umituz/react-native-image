@@ -78,10 +78,9 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
     );
 
     const headerComponent = useCallback(() => {
-        if (!enableEditing) return null;
         return (
             <GalleryHeader
-                onEdit={handleEdit}
+                onEdit={enableEditing ? handleEdit : undefined}
                 onClose={onDismiss}
             />
         );
