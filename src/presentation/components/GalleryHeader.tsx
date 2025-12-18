@@ -1,32 +1,66 @@
 /**
  * Presentation - Gallery Header Component
  * 
- * NOTE: This component should be implemented by consumer app
- * using their design system and safe area handling
+ * High-performance, premium header for the Image Gallery.
+ * Uses design system tokens and handles safe areas.
  */
 
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAppDesignTokens } from '@umituz/react-native-design-system-theme';
+import { AtomicText } from '@umituz/react-native-design-system-atoms';
 
 interface GalleryHeaderProps {
     onEdit?: () => void;
     onClose: () => void;
+    title?: string;
 }
 
-export function GalleryHeader({ onEdit, onClose }: GalleryHeaderProps) {
-    return (
-        <View style={styles.container}>
-            {onEdit ? (
-                <TouchableOpacity style={styles.button} onPress={onEdit}>
-                    <Text style={styles.buttonText}>Edit</Text>
-                </TouchableOpacity>
-            ) : (
-                <View style={styles.spacer} />
-            )}
+export function GalleryHeader({ onEdit, onClose, title }: GalleryHeaderProps) {
+    const insets = useSafeAreaInsets();
+    const tokens = useAppDesignTokens();
 
-            <TouchableOpacity style={styles.button} onPress={onClose}>
-                <Text style={styles.buttonText}>✕</Text>
-            </TouchableOpacity>
+    return (
+        <View style={[
+            styles.container,
+            {
+                paddingTop: Math.max(insets.top, 24),
+                backgroundColor: 'rgba(0, 0, 0, 0.4)'
+            }
+        ]}>
+            <View style={styles.leftSection}>
+                {onEdit ? (
+                    <TouchableOpacity
+                        style={[styles.actionButton, { backgroundColor: 'rgba(255, 255, 255, 0.15)' }]}
+                        onPress={onEdit}
+                        activeOpacity={0.7}
+                    >
+                        <AtomicText style={styles.buttonText}>Edit</AtomicText>
+                    </TouchableOpacity>
+                ) : (
+                    <View style={styles.spacer} />
+                )}
+            </View>
+
+            <View style={styles.centerSection}>
+                {title ? (
+                    <AtomicText type="bodyMedium" style={styles.titleText}>
+                        {title}
+                    </AtomicText>
+                ) : null}
+            </View>
+
+            <View style={styles.rightSection}>
+                <TouchableOpacity
+                    style={[styles.closeButton, { backgroundColor: 'rgba(0, 0, 0, 0.4)' }]}
+                    onPress={onClose}
+                    activeOpacity={0.7}
+                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+                >
+                    <AtomicText style={styles.closeIcon}>✕</AtomicText>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
@@ -37,28 +71,56 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        paddingTop: 48,
-        paddingHorizontal: 16,
+        paddingHorizontal: 20,
         paddingBottom: 16,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        zIndex: 1000,
+    },
+    leftSection: {
+        flex: 1,
+        alignItems: 'flex-start',
+    },
+    centerSection: {
+        flex: 2,
+        alignItems: 'center',
+    },
+    rightSection: {
+        flex: 1,
+        alignItems: 'flex-end',
     },
     spacer: {
-        width: 48,
+        width: 44,
+        height: 44,
     },
-    button: {
-        flexDirection: 'row',
+    actionButton: {
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 20,
+        justifyContent: 'center',
         alignItems: 'center',
-        gap: 8,
-        padding: 12,
-        borderRadius: 8,
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    },
+    closeButton: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     buttonText: {
         fontSize: 14,
         color: '#FFFFFF',
+        fontWeight: 'bold',
+    },
+    closeIcon: {
+        fontSize: 28,
+        color: '#FFFFFF',
+        fontWeight: '300',
+    },
+    titleText: {
+        color: '#FFFFFF',
         fontWeight: '600',
+        textAlign: 'center',
     },
 });

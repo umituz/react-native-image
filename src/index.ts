@@ -89,7 +89,18 @@ export { ImageGallery, type ImageGalleryProps } from './presentation/components/
 export { useImage } from './presentation/hooks/useImage';
 export { useImageTransform } from './presentation/hooks/useImageTransform';
 export { useImageConversion } from './presentation/hooks/useImageConversion';
+// =============================================================================
+// PRESENTATION LAYER - Editor Components & Hooks
+// =============================================================================
+
 export { useImageEditor } from './presentation/hooks/useImageEditor';
+export { useEditorTools } from './presentation/hooks/useEditorTools';
+export { Editor } from './presentation/components/Editor';
+export { EditorCanvas } from './presentation/components/EditorCanvas';
+export { EditorToolbar } from './presentation/components/EditorToolbar';
+export { EditorPanel } from './presentation/components/EditorPanel';
+export { CropComponent } from './presentation/components/CropComponent';
+export { FilterSlider } from './presentation/components/FilterSlider';
 
 export {
   useImageGallery,
