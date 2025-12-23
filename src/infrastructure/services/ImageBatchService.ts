@@ -5,10 +5,8 @@
  */
 
 import type { ImageManipulationResult } from '../../domain/entities/ImageTypes';
-import type { ImageFilter } from '../../domain/entities/ImageFilterTypes';
 import { ImageTransformService } from './ImageTransformService';
 import { ImageConversionService } from './ImageConversionService';
-import { ImageFilterService } from './ImageFilterService';
 import { ImageValidator } from '../utils/ImageValidator';
 import { ImageErrorHandler, IMAGE_ERROR_CODES } from '../utils/ImageErrorHandler';
 
@@ -67,13 +65,6 @@ export class ImageBatchService {
             operation.uri,
             operation.params,
             operation.options
-          );
-          break;
-
-        case 'filter':
-          result = await ImageFilterService.applyFilter(
-            operation.uri,
-            operation.params
           );
           break;
 
