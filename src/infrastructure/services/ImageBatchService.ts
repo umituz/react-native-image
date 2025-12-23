@@ -173,18 +173,4 @@ export class ImageBatchService {
 
     return this.processBatch(operations, options);
   }
-
-  static async filterBatch(
-    uris: string[],
-    filter: ImageFilter,
-    options: BatchProcessingOptions = {}
-  ): Promise<BatchProcessingResult> {
-    const operations: BatchOperation[] = uris.map(uri => ({
-      uri,
-      type: 'filter' as const,
-      params: filter,
-    }));
-
-    return this.processBatch(operations, options);
-  }
 }
