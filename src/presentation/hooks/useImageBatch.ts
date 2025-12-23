@@ -5,7 +5,6 @@
 import { useCallback } from 'react';
 import { useImageOperation } from './useImageOperation';
 import { ImageBatchService, type BatchOperation, type BatchProcessingOptions } from '../../infrastructure/services/ImageBatchService';
-import type { ImageFilter } from '../../domain/entities/ImageFilterTypes';
 
 export const useImageBatch = () => {
     const { isProcessing, error, execute } = useImageOperation();
@@ -19,14 +18,10 @@ export const useImageBatch = () => {
     const compressBatch = useCallback((uris: string[], quality?: number, options?: BatchProcessingOptions) =>
         execute(() => ImageBatchService.compressBatch(uris, quality, options), 'Failed to compress batch'), [execute]);
 
-    const filterBatch = useCallback((uris: string[], filter: ImageFilter, options?: BatchProcessingOptions) =>
-        execute(() => ImageBatchService.filterBatch(uris, filter, options), 'Failed to filter batch'), [execute]);
-
     return {
         processBatch,
         resizeBatch,
         compressBatch,
-        filterBatch,
         isBatchProcessing: isProcessing,
         batchError: error,
     };
