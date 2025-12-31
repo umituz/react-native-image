@@ -26,6 +26,11 @@ export type {
   ImageFlipOptions,
 } from './domain/entities/ImageTypes';
 
+export type {
+  ImageTemplate,
+  MemeTemplateOptions,
+} from './domain/entities/ImageTemplateTypes';
+
 export {
   ImageFormat,
   ImageOrientation,
@@ -68,6 +73,7 @@ export { ImageAIEnhancementService, type AutoEnhancementOptions, type Enhancemen
 export { ImageMetadataService, type ImageMetadataExtractionOptions } from './infrastructure/services/ImageMetadataService';
 export { ImageQualityPresetService, type QualityPreset, type QualityPresets, IMAGE_QUALITY_PRESETS } from './infrastructure/utils/ImageQualityPresets';
 export { ImageSpecializedEnhancementService } from './infrastructure/services/ImageSpecializedEnhancementService';
+export { ImageTemplateService } from './infrastructure/services/ImageTemplateService';
 
 // =============================================================================
 // PRESENTATION LAYER - React Native Components & Hooks
