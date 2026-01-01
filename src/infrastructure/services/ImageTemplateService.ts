@@ -13,7 +13,7 @@ export class ImageTemplateService {
    * @returns Formatted memegen.link URL
    */
   static generateMemeUrl(options: MemeTemplateOptions): string {
-    const { templateKey, topText = '', bottomText = '' } = options;
+    const { templateKey, topText = '', bottomText = '', style, width, height } = options;
     
     // Internal helper for memegen-specific encoding
     const encodeMemeText = (text: string) => {
@@ -26,14 +26,24 @@ export class ImageTemplateService {
           .replace(/\?/g, "~q")
           .replace(/#/g, "~h")
           .replace(/\//g, "~s")
-          // Additional memegen.link requirements if needed
       );
     };
 
     const top = encodeMemeText(topText);
     const bottom = encodeMemeText(bottomText);
 
-    return `https://api.memegen.link/images/${templateKey}/${top}/${bottom}.png`;
+    let url = `https://api.memegen.link/images/${templateKey}/${top}/${bottom}.png`;
+    
+    const params: string[] = [];
+    if (style) params.push(`style=${style}`);
+    if (width) params.push(`width=${width}`);
+    if (height) params.push(`height=${height}`);
+
+    if (params.length > 0) {
+      url += `?${params.join('&')}`;
+    }
+
+    return url;
   }
 
   /**
