@@ -7,36 +7,33 @@
 import { useImageTransform } from './useImageTransform';
 import { useImageConversion } from './useImageConversion';
 import { useImageBatch } from './useImageBatch';
-import { useImageAIEnhancement } from './useImageAIEnhancement';
+import { useImageEnhance } from './useImageEnhance';
 import { useImageMetadata } from './useImageMetadata';
 
 export const useImage = () => {
   const transform = useImageTransform();
   const conversion = useImageConversion();
   const batch = useImageBatch();
-  const aiEnhancement = useImageAIEnhancement();
+  const enhance = useImageEnhance();
   const metadata = useImageMetadata();
 
   return {
-    // Basic operations
     ...transform,
     ...conversion,
-    // Advanced operations
     ...batch,
-    ...aiEnhancement,
+    ...enhance,
     ...metadata,
-    // Combined state
     isProcessing:
       transform.isTransforming ||
       conversion.isConverting ||
       batch.isBatchProcessing ||
-      aiEnhancement.isEnhancing ||
+      enhance.isEnhancing ||
       metadata.isExtracting,
     error:
       transform.transformError ||
       conversion.conversionError ||
       batch.batchError ||
-      aiEnhancement.enhancementError ||
+      enhance.enhancementError ||
       metadata.metadataError,
   };
 };

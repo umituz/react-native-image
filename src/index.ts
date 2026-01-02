@@ -78,6 +78,9 @@ export { ImageTemplateService } from './infrastructure/services/ImageTemplateSer
 // =============================================================================
 
 export { ImageGallery, type ImageGalleryProps } from './presentation/components/ImageGallery';
+export { TextEditorSheet, type TextEditorSheetProps } from './presentation/components/editor/TextEditorSheet';
+export { StickerPickerSheet, type StickerPickerSheetProps } from './presentation/components/editor/StickerPickerSheet';
+export { FilterPickerSheet, type FilterPickerSheetProps } from './presentation/components/editor/FilterPickerSheet';
 
 export { useImage } from './presentation/hooks/useImage';
 export { useImageTransform } from './presentation/hooks/useImageTransform';

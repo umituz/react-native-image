@@ -12,9 +12,9 @@ import type {
 } from '../../domain/entities/ImageTypes';
 import { IMAGE_CONSTANTS } from '../../domain/entities/ImageConstants';
 import { ImageTransformService } from './ImageTransformService';
-import { ImageAdvancedTransformService } from './ImageAdvancedTransformService';
 import { ImageValidator } from '../utils/ImageValidator';
 import { ImageErrorHandler, IMAGE_ERROR_CODES } from '../utils/ImageErrorHandler';
+import { ImageTransformUtils } from '../utils/ImageTransformUtils';
 
 export class ImageConversionService {
     static async compress(
@@ -22,15 +22,8 @@ export class ImageConversionService {
         quality: number = IMAGE_CONSTANTS.defaultQuality
     ): Promise<ImageManipulationResult> {
         try {
-            const uriValidation = ImageValidator.validateUri(uri);
-            if (!uriValidation.isValid) {
-                throw ImageErrorHandler.createError(uriValidation.error!, IMAGE_ERROR_CODES.INVALID_URI, 'compress');
-            }
-
-            const qualityValidation = ImageValidator.validateQuality(quality);
-            if (!qualityValidation.isValid) {
-                throw ImageErrorHandler.createError(qualityValidation.error!, IMAGE_ERROR_CODES.INVALID_QUALITY, 'compress');
-            }
+            ImageValidator.validateUri(uri);
+            ImageValidator.validateQuality(quality);
 
             return await ImageManipulator.manipulateAsync(
                 uri,
@@ -48,23 +41,14 @@ export class ImageConversionService {
         quality?: number
     ): Promise<ImageManipulationResult> {
         try {
-            const uriValidation = ImageValidator.validateUri(uri);
-            if (!uriValidation.isValid) {
-                throw ImageErrorHandler.createError(uriValidation.error!, IMAGE_ERROR_CODES.INVALID_URI, 'convertFormat');
-            }
-
+            ImageValidator.validateUri(uri);
             const compressQuality = quality ?? IMAGE_CONSTANTS.defaultQuality;
-            const qualityValidation = ImageValidator.validateQuality(compressQuality);
-            if (!qualityValidation.isValid) {
-                throw ImageErrorHandler.createError(qualityValidation.error!, IMAGE_ERROR_CODES.INVALID_QUALITY, 'convertFormat');
-            }
-
             return await ImageManipulator.manipulateAsync(
                 uri,
                 [],
                 {
                     compress: compressQuality,
-                    format: ImageTransformService['mapFormat'](format),
+                    format: ImageTransformUtils.mapFormat(format),
                 }
             );
         } catch (error) {
@@ -78,17 +62,8 @@ export class ImageConversionService {
         options?: ImageSaveOptions
     ): Promise<ImageManipulationResult> {
         try {
-            const uriValidation = ImageValidator.validateUri(uri);
-            if (!uriValidation.isValid) {
-                throw ImageErrorHandler.createError(uriValidation.error!, IMAGE_ERROR_CODES.INVALID_URI, 'createThumbnail');
-            }
-
-            const dimValidation = ImageValidator.validateDimensions({ width: size, height: size });
-            if (!dimValidation.isValid) {
-                throw ImageErrorHandler.createError(dimValidation.error!, IMAGE_ERROR_CODES.INVALID_DIMENSIONS, 'createThumbnail');
-            }
-
-            return await ImageAdvancedTransformService.resizeToFit(uri, size, size, {
+            ImageValidator.validateUri(uri);
+            return await ImageTransformService.resizeToFit(uri, size, size, {
                 ...options,
                 compress: options?.compress ?? IMAGE_CONSTANTS.compressQuality.medium,
             });
