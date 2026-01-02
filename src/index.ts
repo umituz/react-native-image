@@ -60,7 +60,6 @@ export {
 // =============================================================================
 
 export { ImageTransformService } from './infrastructure/services/ImageTransformService';
-export { ImageAdvancedTransformService } from './infrastructure/services/ImageAdvancedTransformService';
 export { ImageConversionService } from './infrastructure/services/ImageConversionService';
 export { ImageStorageService } from './infrastructure/services/ImageStorageService';
 export {
@@ -69,10 +68,9 @@ export {
 } from './infrastructure/services/ImageViewerService';
 
 export { ImageBatchService, type BatchOperation, type BatchProcessingOptions, type BatchProcessingResult } from './infrastructure/services/ImageBatchService';
-export { ImageAIEnhancementService, type AutoEnhancementOptions, type EnhancementResult } from './infrastructure/services/ImageAIEnhancementService';
+export { ImageEnhanceService, type AutoEnhancementOptions, type EnhancementResult } from './infrastructure/services/ImageEnhanceService';
 export { ImageMetadataService, type ImageMetadataExtractionOptions } from './infrastructure/services/ImageMetadataService';
 export { ImageQualityPresetService, type QualityPreset, type QualityPresets, IMAGE_QUALITY_PRESETS } from './infrastructure/utils/ImageQualityPresets';
-export { ImageSpecializedEnhancementService } from './infrastructure/services/ImageSpecializedEnhancementService';
 export { ImageTemplateService } from './infrastructure/services/ImageTemplateService';
 
 // =============================================================================
@@ -91,7 +89,7 @@ export {
 } from './presentation/hooks/useImageGallery';
 
 export { useImageBatch } from './presentation/hooks/useImageBatch';
-export { useImageAIEnhancement } from './presentation/hooks/useImageAIEnhancement';
+export { useImageEnhance } from './presentation/hooks/useImageEnhance';
 export { useImageMetadata } from './presentation/hooks/useImageMetadata';
 
 

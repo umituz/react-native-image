@@ -1,10 +1,10 @@
 /**
- * Image Infrastructure - AI Image Analysis
+ * Image Infrastructure - Image Analysis
  * 
- * Advanced image analysis utilities
+ * Image analysis utilities
  */
 
-export class AIImageAnalysisUtils {
+export class ImageAnalysisUtils {
   static calculateColorBalance(imageData: Uint8ClampedArray): {
     redBalance: number;
     greenBalance: number;

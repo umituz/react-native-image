@@ -4,7 +4,6 @@
 import { useCallback } from 'react';
 import { useImageOperation } from './useImageOperation';
 import { ImageTransformService } from '../../infrastructure/services/ImageTransformService';
-import { ImageAdvancedTransformService } from '../../infrastructure/services/ImageAdvancedTransformService';
 import type {
     ImageManipulateAction,
     ImageSaveOptions,
@@ -28,13 +27,13 @@ export const useImageTransform = () => {
         execute(() => ImageTransformService.flip(uri, flipParams, options), 'Failed to flip'), [execute]);
 
     const manipulate = useCallback((uri: string, action: ImageManipulateAction, options?: ImageSaveOptions) =>
-        execute(() => ImageAdvancedTransformService.manipulate(uri, action, options), 'Failed to manipulate'), [execute]);
+        execute(() => ImageTransformService.manipulate(uri, action, options), 'Failed to manipulate'), [execute]);
 
     const resizeToFit = useCallback((uri: string, maxWidth: number, maxHeight: number, options?: ImageSaveOptions) =>
-        execute(() => ImageAdvancedTransformService.resizeToFit(uri, maxWidth, maxHeight, options), 'Failed to resize to fit'), [execute]);
+        execute(() => ImageTransformService.resizeToFit(uri, maxWidth, maxHeight, options), 'Failed to resize to fit'), [execute]);
 
     const cropToSquare = useCallback((uri: string, width: number, height: number, options?: ImageSaveOptions) =>
-        execute(() => ImageAdvancedTransformService.cropToSquare(uri, width, height, options), 'Failed to crop square'), [execute]);
+        execute(() => ImageTransformService.cropToSquare(uri, width, height, options), 'Failed to crop square'), [execute]);
 
     return {
         resize, crop, rotate, flip, manipulate, resizeToFit, cropToSquare,

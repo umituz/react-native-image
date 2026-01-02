@@ -7,12 +7,16 @@ import { MemeTemplateOptions } from '../../domain/entities/ImageTemplateTypes';
  */
 export class ImageTemplateService {
   /**
-   * Generates a Memegen.link URL for a given template and texts
+   * Generates a meme URL for a given template and texts
    * 
    * @param options Meme configuration (templateKey, topText, bottomText)
-   * @returns Formatted memegen.link URL
+   * @param baseUrl Optional base URL for the image generation service
+   * @returns Formatted image URL
    */
-  static generateMemeUrl(options: MemeTemplateOptions): string {
+  static generateMemeUrl(
+    options: MemeTemplateOptions, 
+    baseUrl: string = 'https://api.memegen.link'
+  ): string {
     const { templateKey, topText = '', bottomText = '', style, width, height } = options;
     
     // Internal helper for memegen-specific encoding
@@ -32,7 +36,9 @@ export class ImageTemplateService {
     const top = encodeMemeText(topText);
     const bottom = encodeMemeText(bottomText);
 
-    let url = `https://api.memegen.link/images/${templateKey}/${top}/${bottom}.png`;
+    // Ensure baseUrl doesn't have a trailing slash
+    const base = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+    let url = `${base}/images/${templateKey}/${top}/${bottom}.png`;
     
     const params: string[] = [];
     if (style) params.push(`style=${style}`);

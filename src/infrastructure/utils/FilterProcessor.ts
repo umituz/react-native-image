@@ -147,44 +147,43 @@ export class FilterProcessor {
   }
 
   static applyFilter(
-    imageData: ImageData,
+    imageData: Uint8ClampedArray,
+    width: number,
+    height: number,
     filterState: FilterState
-  ): ImageData {
+  ): Uint8ClampedArray {
     const preset = this.getPreset(filterState.id);
     if (!preset || !filterState.enabled) {
       return imageData;
     }
 
-    let processedData = new Uint8ClampedArray(imageData.data);
+    let processedData = new Uint8ClampedArray(imageData);
 
     // Apply filter based on preset type
     switch (filterState.id) {
       case 'brightness':
-        processedData = this.applyBrightness(processedData, filterState.parameters.brightness) as any;
+        processedData = this.applyBrightness(processedData, filterState.parameters.brightness);
         break;
       case 'contrast':
-        processedData = this.applyContrast(processedData, filterState.parameters.contrast) as any;
+        processedData = this.applyContrast(processedData, filterState.parameters.contrast);
         break;
       case 'saturation':
-        processedData = this.applySaturation(processedData, filterState.parameters.saturation) as any;
+        processedData = this.applySaturation(processedData, filterState.parameters.saturation);
         break;
       case 'vintage':
-        processedData = this.applyVintage(processedData, filterState.parameters.intensity, filterState.parameters.warmth) as any;
+        processedData = this.applyVintage(processedData, filterState.parameters.intensity, filterState.parameters.warmth);
         break;
       case 'blur':
-        processedData = this.applyBlur(processedData, filterState.parameters.radius) as any;
+        processedData = this.applyBlur(processedData, filterState.parameters.radius, width, height);
         break;
     }
 
     // Apply intensity
     if (filterState.intensity < 100) {
-      processedData = this.applyIntensity(imageData.data, processedData, filterState.intensity / 100) as any;
+      processedData = this.applyIntensity(imageData, processedData, filterState.intensity / 100);
     }
 
-    return {
-      ...imageData,
-      data: processedData,
-    };
+    return processedData;
   }
 
   private static applyBrightness(
@@ -282,12 +281,12 @@ export class FilterProcessor {
 
   private static applyBlur(
     data: Uint8ClampedArray,
-    radius: number
+    radius: number,
+    width: number,
+    height: number
   ): Uint8ClampedArray {
     // Simple box blur implementation
     const result = new Uint8ClampedArray(data);
-    const width = Math.sqrt(data.length / 4);
-    const height = width;
     const size = Math.floor(radius) || 1;
 
     for (let y = 0; y < height; y++) {
@@ -336,26 +335,5 @@ export class FilterProcessor {
     return result;
   }
 
-  static createPreview(
-    imageData: ImageData,
-    filterState: FilterState,
-    previewSize: { width: number; height: number }
-  ): ImageData {
-    // Create a smaller preview version
-    const previewCanvas = document.createElement('canvas') || {} as any;
-    previewCanvas.width = previewSize.width;
-    previewCanvas.height = previewSize.height;
-    const ctx = previewCanvas.getContext('2d');
 
-    if (!ctx) return imageData;
-
-    // Scale down the image for preview
-    ctx.drawImage(
-      {} as HTMLImageElement, // Would be the actual image
-      0, 0, previewSize.width, previewSize.height
-    );
-
-    const previewImageData = ctx.getImageData(0, 0, previewSize.width, previewSize.height);
-    return this.applyFilter(previewImageData, filterState);
-  }
 }
